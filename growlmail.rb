@@ -19,7 +19,8 @@ if configuration["username"]
 else
 				url = configuration["url"]
 end
+
 Hpricot(open "https://" + url)
 
-							g.notify "growlmail Notification", "newmail", "msg count"
+g.notify "growlmail Notification", "newmail", "msg count"
 							         
