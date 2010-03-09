@@ -11,8 +11,11 @@ hess.insecure = true #because we don't care to validate right now
 
 FP = File.open("config.yml")
 configuration = YAML::load( FP )
+FP.close
 
 field = configuration["field"] || "fullcount"
+
+value = configuration[field]
 
 #we expect at least a url, check for a username
 if configuration["username"]
@@ -26,7 +29,16 @@ end
 
 response = Hpricot( hess.get("https://" + url).body )
 
-new_mail = (response/"fullcount").inner_html
+nvalue = (response/"fullcount").inner_html.to_i
 
-g.notify "growlmail Notification", "Gmail New Mail for #{configuration["username"]}", "#{new_mail} messages #{Time.now}"
+if nvalue != value
+  value = nvalue
+  g.notify "growlmail Notification", "Gmail New Mail for #{configuration["username"]}", "#{value} messages #{Time.now}"
+end
+
+
+configuration[field] = value
+
+finish = YAML::dump( configuration )
+File.open("config.yml",'w').write(finish)
 							         
