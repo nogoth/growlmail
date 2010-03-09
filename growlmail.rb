@@ -12,6 +12,8 @@ hess.insecure = true #because we don't care to validate right now
 FP = File.open("config.yml")
 configuration = YAML::load( FP )
 
+field = configuration["field"] || "fullcount"
+
 #we expect at least a url, check for a username
 if configuration["username"]
 				if ! configuration["password"]
