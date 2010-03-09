@@ -1,11 +1,13 @@
 require 'yaml'
 require 'hpricot'
 require 'ruby-growl'
-require 'open-uri'
+require 'patron'
 
 g = Growl.new "localhost", "growlmail",
               ["growlmail Notification"]
 
+hess = Patron::Session.new
+hess.insecure = true #because we don't care to validate right now
 
 FP = File.open("config.yml")
 configuration = YAML::load( FP )
@@ -20,7 +22,9 @@ else
 				url = configuration["url"]
 end
 
-Hpricot(open "https://" + url)
+response = Hpricot( hess.get("https://" + url).body )
 
-g.notify "growlmail Notification", "newmail", "msg count"
+new_mail = (response/"fullcount").inner_html
+
+g.notify "growlmail Notification", "Gmail New Mail for #{configuration["username"]}", "#{new_mail} messages #{Time.now}"
 							         
