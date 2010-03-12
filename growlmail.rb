@@ -29,7 +29,7 @@ end
 
 response = Hpricot( hess.get("https://" + url).body )
 
-nvalue = (response/"fullcount").inner_html.to_i
+nvalue = (response/"fullcount").inner_html
 
 if nvalue != value
   value = nvalue
